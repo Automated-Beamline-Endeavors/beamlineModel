@@ -23,13 +23,13 @@ class beamline:
 # to work. When beamline object initialized it just as to unpack
 		
 		self.oe0 = Shadow.Source()
-		self.oe1 = Shadow.OE()
-		self.oe2 = Shadow.OE()
-		self.oe3 = Shadow.OE()
-		self.oe4 = Shadow.OE()
-		self.oe5 = Shadow.OE()
-		self.oe6 = Shadow.OE()
-
+		
+		#Could do all optical elements (OE) as items in list
+		self.oe = []
+		for i in range(6)
+			self.oe.append(Shadow.OE())
+		# If this done will need to update the setting of properties
+		
 		# Set the properties of each element
 		#  undulator
 		self.oe0.FDISTR = 3
@@ -233,6 +233,12 @@ class beamline:
 		# xrot: 3
 		# zrot: 4
 		# zrot: 5
+		
+	    for i, element in enumerate(self.oe):
+            element.xoff = motorVals[i][0]
+            element.yoff = motorVals[i][1]
+            ...
+  
 	
 	def sim(self, motorVals, debug = False)
 		# I put a debug here for testing --> I imagine it would do something similar
@@ -242,12 +248,10 @@ class beamline:
 		self._setElements(motorVals)
 		
 		self.beam.genSource(oe0)
-		self.beam.traceOE(oe1, 1)
-		self.beam.traceOE(oe2, 2)
-		self.beam.traceOE(oe3, 3)
-		self.beam.traceOE(oe4, 4)
-		self.beam.traceOE(oe5, 5)
-		self.beam.traceOE(oe6, 6)
+		
+		#if all OE done as items in list:
+		for i, element in enumerate(self.oe)
+			self.beam.traceOE(element, i+1)
 
 		# return the number of good rays
 		# print(str(beam.nrays(nolost=1)))
