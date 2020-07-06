@@ -5,9 +5,9 @@ import Shadow
 import numpy
 import random
 import matplotlib.pyplot as plt
+import csv
 
-
-random.seed()
+random.seed(2)
 
 
 def my_range(start, end, step):
@@ -17,7 +17,6 @@ def my_range(start, end, step):
 
 
 def calcFWHM(beam, col_h, col_v):
-
     if isinstance(beam, str):
         beam1 = Shadow.Beam()
         beam1.load(beam)
@@ -44,74 +43,12 @@ def maximum(rays):
     return maxima, instance
 
 
-def sim(x, i, o, step):
+def sim(x, Motor):
     # write (1) or not (0) SHADOW files start.xx end.xx star.xx
     iwrite = 0
     x += 1
 
-    #  O.E. positions in mm and ccw,deg initialization
-    #  plane mirror
-    class P1:
-        x = 0  # float(format((random.random() * 0.01) - 0.005, '0.4f'))
-        y = 0  # float(format((random.random() * 0.01) - 0.005, '0.4f'))
-        z = 0  # float(format((random.random() * 0.01) - 0.005, '0.4f'))
-        xrot = 0  # float(format((random.random() * 2) - 1, '0.4f'))
-        yrot = 0  # float(format((random.random() * 2) - 1, '0.4f'))
-        zrot = 0  # float(format((random.random() * 2) - 1, '0.4f'))
 
-    #  plane mirror
-    class P2:
-        x = 0  # float(format((random.random() * 0.01) - 0.005, '0.4f'))
-        y = 0  # float(format((random.random() * 0.01) - 0.005, '0.4f'))
-        z = 0  # float(format((random.random() * 0.01) - 0.005, '0.4f'))
-        xrot = 0  # float(format((random.random() * 2) - 1, '0.4f'))
-        yrot = 0  # float(format((random.random() * 2) - 1, '0.4f'))
-        zrot = 0  # float(format((random.random() * 2) - 1, '0.4f'))
-
-    #  plane mirror
-    class P3:
-        x = 0  # float(format((random.random() * 0.01) - 0.005, '0.4f'))
-        y = 0  # float(format((random.random() * 0.01) - 0.005, '0.4f'))
-        z = 0  # float(format((random.random() * 0.01) - 0.005, '0.4f'))
-        xrot = 0  # float(format((random.random() * 2) - 1, '0.4f'))
-        yrot = 0  # float(format((random.random() * 2) - 1, '0.4f'))
-        zrot = 0  # float(format((random.random() * 2) - 1, '0.4f'))
-
-    #  plane grating
-    class P4:
-        x = 0  # float(format((random.random() * 0.01) - 0.005, '0.4f'))
-        y = 0  # float(format((random.random() * 0.01) - 0.005, '0.4f'))
-        z = 0  # float(format((random.random() * 0.01) - 0.005, '0.4f'))
-        xrot = 0  # float(format((random.random() * 2) - 1, '0.4f'))
-        yrot = 0  # float(format((random.random() * 2) - 1, '0.4f'))
-        zrot = 0  # float(format((random.random() * 2) - 1, '0.4f'))
-
-    ##  screen slits
-    #class P5:
-    #    x = 0  # float(format((random.random() * 0.01) - 0.005, '0.4f'))
-    #    y = 0  # float(format((random.random() * 0.01) - 0.005, '0.4f'))
-    #    z = 0  # float(format((random.random() * 0.01) - 0.005, '0.4f'))
-    #    xrot = 0  # float(format((random.random() * 2) - 1, '0.4f'))
-    #    yrot = 0  # float(format((random.random() * 2) - 1, '0.4f'))
-    #    zrot = 0  # float(format((random.random() * 2) - 1, '0.4f'))
-
-    #  ellipsoid mirror
-    class P6:
-        x = 0  # float(format((random.random() * 0.01) - 0.005, '0.4f'))
-        y = 0  # float(format((random.random() * 0.01) - 0.005, '0.4f'))
-        z = 0  # float(format((random.random() * 0.01) - 0.005, '0.4f'))
-        xrot = 0  # float(format((random.random() * 2) - 1, '0.4f'))
-        yrot = 0  # float(format((random.random() * 2) - 1, '0.4f'))
-        zrot = 0  # float(format((random.random() * 2) - 1, '0.4f'))
-
-    #  ellipsoid mirror
-    class P7:
-        x = step.x  # float(format((random.random() * 0.01) - 0.005, '0.4f'))
-        y = step.y  # float(format((random.random() * 0.01) - 0.005, '0.4f'))
-        z = step.z  # float(format((random.random() * 0.01) - 0.005, '0.4f'))
-        xrot = step.xrot  # float(format((random.random() * 2) - 1, '0.4f'))
-        yrot = step.yrot  # float(format((random.random() * 2) - 1, '0.4f'))
-        zrot = step.zrot  # float(format((random.random() * 2) - 1, '0.4f'))
 
     #  Start the beam simulation
     #  Sweep from -0.0005 to 0.0005 with step size = 0.0005
@@ -128,64 +65,6 @@ def sim(x, i, o, step):
     oe4 = Shadow.OE()
     oe5 = Shadow.OE()
     oe6 = Shadow.OE()
-    #oe7 = Shadow.OE()
-
-    #  print the input arguments for each instance
-    i.write("Instance: " + str(x) + "\nOptical Element 1\n")
-    i.write("Offset X = " + str(P1.x) + " mm\n")
-    i.write("Offset Y = " + str(P1.y) + " mm\n")
-    i.write("Offset Z = " + str(P1.z) + " mm\n")
-    i.write("Rotation X = " + str(P1.xrot) + " CCW,deg\n")
-    i.write("Rotation Y = " + str(P1.yrot) + " CCW,deg\n")
-    i.write("Rotation Z = " + str(P1.zrot) + " CCW,deg\n\n")
-
-    i.write("Optical Element 2:\n")
-    i.write("Offset X = " + str(P2.x) + " mm\n")
-    i.write("Offset Y = " + str(P2.y) + " mm\n")
-    i.write("Offset Z = " + str(P2.z) + " mm\n")
-    i.write("Rotation X = " + str(P2.xrot) + " CCW,deg\n")
-    i.write("Rotation Y = " + str(P2.yrot) + " CCW,deg\n")
-    i.write("Rotation Z = " + str(P2.zrot) + " CCW,deg\n\n")
-
-    i.write("Optical Element 3:\n")
-    i.write("Offset X = " + str(P3.x) + " mm\n")
-    i.write("Offset Y = " + str(P3.y) + " mm\n")
-    i.write("Offset Z = " + str(P3.z) + " mm\n")
-    i.write("Rotation X = " + str(P3.xrot) + " CCW,deg\n")
-    i.write("Rotation Y = " + str(P3.yrot) + " CCW,deg\n")
-    i.write("Rotation Z = " + str(P3.zrot) + " CCW,deg\n\n")
-
-    i.write("Optical Element 4:\n")
-    i.write("Offset X = " + str(P4.x) + " mm\n")
-    i.write("Offset Y = " + str(P4.y) + " mm\n")
-    i.write("Offset Z = " + str(P4.z) + " mm\n")
-    i.write("Rotation X = " + str(P4.xrot) + " CCW,deg\n")
-    i.write("Rotation Y = " + str(P4.yrot) + " CCW,deg\n")
-    i.write("Rotation Z = " + str(P4.zrot) + " CCW,deg\n\n")
-
-    #i.write("Optical Element 5:\n")
-    #i.write("Offset X = " + str(P5.x) + " mm\n")
-    #i.write("Offset Y = " + str(P5.y) + " mm\n")
-    #i.write("Offset Z = " + str(P5.z) + " mm\n")
-    #i.write("Rotation X = " + str(P5.xrot) + " CCW,deg\n")
-    #i.write("Rotation Y = " + str(P5.yrot) + " CCW,deg\n")
-    #i.write("Rotation Z = " + str(P5.zrot) + " CCW,deg\n\n")
-
-    i.write("Optical Element 6:\n")
-    i.write("Offset X = " + str(P6.x) + " mm\n")
-    i.write("Offset Y = " + str(P6.y) + " mm\n")
-    i.write("Offset Z = " + str(P6.z) + " mm\n")
-    i.write("Rotation X = " + str(P6.xrot) + " CCW,deg\n")
-    i.write("Rotation Y = " + str(P6.yrot) + " CCW,deg\n")
-    i.write("Rotation Z = " + str(P6.zrot) + " CCW,deg\n\n")
-
-    i.write("Optical Element 7:\n")
-    i.write("Offset X = " + str(P7.x) + " mm\n")
-    i.write("Offset Y = " + str(P7.y) + " mm\n")
-    i.write("Offset Z = " + str(P7.z) + " mm\n")
-    i.write("Rotation X = " + str(P7.xrot) + " CCW,deg\n")
-    i.write("Rotation Y = " + str(P7.yrot) + " CCW,deg\n")
-    i.write("Rotation Z = " + str(P7.zrot) + " CCW,deg\n\n")
 
     #
     # Define variables. See meaning of variables in:
@@ -221,9 +100,9 @@ def sim(x, i, o, step):
     oe1.FHIT_C = 1
     oe1.FWRITE = 3
     oe1.F_MOVE = 1
-    oe1.OFFX = P1.x
-    oe1.OFFY = P1.y
-    oe1.OFFZ = P1.z
+    oe1.OFFX = Motor.xoff1
+    oe1.OFFY = Motor.yoff1
+    oe1.OFFZ = Motor.zoff1
     oe1.RLEN1 = 260.0
     oe1.RLEN2 = 260.0
     oe1.RWIDX1 = 20.0
@@ -232,21 +111,21 @@ def sim(x, i, o, step):
     oe1.T_INCIDENCE = 89.599998
     oe1.T_REFLECTION = 89.599998
     oe1.T_SOURCE = 30800.0
-    oe1.X_ROT = P1.xrot
-    oe1.Y_ROT = P1.yrot
-    oe1.Z_ROT = P1.zrot
+    oe1.X_ROT = Motor.xrot1
+    oe1.Y_ROT = Motor.yrot1
+    oe1.Z_ROT = Motor.zrot1
     #  when taking into account reflectivity
-    #oe1.FILE_REFL = b"C:/cygwin64/Oasys/Si.dat"
-    #oe1.F_REFLEC = 1
+    # oe1.FILE_REFL = b"C:/cygwin64/Oasys/Si.dat"
+    # oe1.F_REFLEC = 1
 
     #  plane mirror
     oe2.DUMMY = 0.1
     oe2.FHIT_C = 1
     oe2.FWRITE = 3
     oe2.F_MOVE = 1
-    oe2.OFFX = P2.x
-    oe2.OFFY = P2.y
-    oe2.OFFZ = P2.z
+    oe2.OFFX = Motor.xoff2
+    oe2.OFFY = Motor.yoff2
+    oe2.OFFZ = Motor.zoff2
     oe2.RLEN1 = 75.0
     oe2.RLEN2 = 75.0
     oe2.RWIDX1 = 22.5
@@ -255,12 +134,12 @@ def sim(x, i, o, step):
     oe2.T_INCIDENCE = 88.5
     oe2.T_REFLECTION = 88.5
     oe2.T_SOURCE = 500.0
-    oe2.X_ROT = P2.xrot
-    oe2.Y_ROT = P2.yrot
-    oe2.Z_ROT = P2.zrot
+    oe2.X_ROT = Motor.xrot2
+    oe2.Y_ROT = Motor.yrot2
+    oe2.Z_ROT = Motor.zrot2
     #  reflect
-    #oe2.FILE_REFL = b"C:/cygwin64/Oasys/Si.dat"
-    #oe2.F_REFLEC = 1
+    # oe2.FILE_REFL = b"C:/cygwin64/Oasys/Si.dat"
+    # oe2.F_REFLEC = 1
 
     #  plane mirror
     oe3.ALPHA = 90.0
@@ -268,9 +147,9 @@ def sim(x, i, o, step):
     oe3.FHIT_C = 1
     oe3.FWRITE = 3
     oe3.F_MOVE = 1
-    oe3.OFFX = P3.x
-    oe3.OFFY = P3.y
-    oe3.OFFZ = P3.z
+    oe3.OFFX = Motor.xoff3
+    oe3.OFFY = Motor.yoff3
+    oe3.OFFZ = Motor.zoff3
     oe3.RLEN1 = 190.0
     oe3.RLEN2 = 190.0
     oe3.RWIDX1 = 15.0
@@ -279,12 +158,12 @@ def sim(x, i, o, step):
     oe3.T_INCIDENCE = 86.810772
     oe3.T_REFLECTION = 86.810772
     oe3.T_SOURCE = 8265.8165
-    oe3.X_ROT = P3.xrot
-    oe3.Y_ROT = P3.yrot
-    oe3.Z_ROT = P3.zrot
+    oe3.X_ROT = Motor.xrot3
+    oe3.Y_ROT = Motor.yrot3
+    oe3.Z_ROT = Motor.zrot3
     #  reflect
-    #oe3.FILE_REFL = b"C:/cygwin64/Oasys/Si.dat"
-    #oe3.F_REFLEC = 1
+    # oe3.FILE_REFL = b"C:/cygwin64/Oasys/Si.dat"
+    # oe3.F_REFLEC = 1
 
     #  plane grating
     oe4.ALPHA = 180.0
@@ -295,9 +174,9 @@ def sim(x, i, o, step):
     oe4.F_MOVE = 1
     oe4.F_RULING = 5
     oe4.F_RUL_ABS = 1
-    oe4.OFFX = P4.x
-    oe4.OFFY = P4.y
-    oe4.OFFZ = P4.z
+    oe4.OFFX = Motor.xoff4
+    oe4.OFFY = Motor.yoff4
+    oe4.OFFZ = Motor.zoff4
     oe4.RLEN1 = 57.5
     oe4.RLEN2 = 57.5
     oe4.RULING = 1199.22002
@@ -310,24 +189,9 @@ def sim(x, i, o, step):
     oe4.T_INCIDENCE = 87.771697
     oe4.T_REFLECTION = 85.049847
     oe4.T_SOURCE = 135.0
-    oe4.X_ROT = P4.xrot
-    oe4.Y_ROT = P4.yrot
-    oe4.Z_ROT = P4.zrot
-
-    ##  screen slits
-    #oe5.DUMMY = 0.1
-    #oe5.FSTAT = 1
-    #oe5.FWRITE = 3
-    #oe5.F_REFRAC = 2
-    #oe5.F_SCREEN = 1
-    #oe5.I_SLIT = numpy.array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-    #oe5.N_SCREEN = 1
-    #oe5.RX_SLIT = numpy.array([10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-    #oe5.RZ_SLIT = numpy.array([0.02, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-    #oe5.T_IMAGE = 0.0
-    #oe5.T_INCIDENCE = 0.0
-    #oe5.T_REFLECTION = 180.0
-    #oe5.T_SOURCE = 20000.0
+    oe4.X_ROT = Motor.xrot4
+    oe4.Y_ROT = Motor.yrot4
+    oe4.Z_ROT = Motor.zrot4
 
     #  ellipsoid mirror oe6 -> oe5 after removing slit
     oe5.ALPHA = 90.0
@@ -341,9 +205,9 @@ def sim(x, i, o, step):
     oe5.FWRITE = 3
     oe5.F_EXT = 1
     oe5.F_MOVE = 1
-    oe5.OFFX = P6.x
-    oe5.OFFY = P6.y
-    oe5.OFFZ = P6.z
+    oe5.OFFX = Motor.xoff5
+    oe5.OFFY = Motor.yoff5
+    oe5.OFFZ = Motor.zoff5
     oe5.RLEN1 = 140.0
     oe5.RLEN2 = 140.0
     oe5.RWIDX1 = 7.5
@@ -352,12 +216,12 @@ def sim(x, i, o, step):
     oe5.T_INCIDENCE = 88.5
     oe5.T_REFLECTION = 88.5
     oe5.T_SOURCE = 4600.0
-    oe5.X_ROT = P6.xrot
-    oe5.Y_ROT = P6.yrot
-    oe5.Z_ROT = P6.zrot
+    oe5.X_ROT = Motor.xrot5
+    oe5.Y_ROT = Motor.yrot5
+    oe5.Z_ROT = Motor.zrot5
     #  reflect
-    #oe6.FILE_REFL = b"C:/cygwin64/Oasys/Si.dat"
-    #oe6.F_REFLEC = 1
+    # oe6.FILE_REFL = b"C:/cygwin64/Oasys/Si.dat"
+    # oe6.F_REFLEC = 1
 
     #  ellipsoid mirror oe7 -> oe6 after removing slit
     oe6.ALPHA = 90.0
@@ -371,9 +235,9 @@ def sim(x, i, o, step):
     oe6.FWRITE = 3
     oe6.F_EXT = 1
     oe6.F_MOVE = 1
-    oe6.OFFX = P7.x
-    oe6.OFFY = P7.y
-    oe6.OFFZ = P7.z
+    oe6.OFFX = Motor.xoff6
+    oe6.OFFY = Motor.yoff6
+    oe6.OFFZ = Motor.zoff6
     oe6.RLEN1 = 35.0
     oe6.RLEN2 = 35.0
     oe6.RWIDX1 = 10.0
@@ -382,21 +246,18 @@ def sim(x, i, o, step):
     oe6.T_INCIDENCE = 88.5
     oe6.T_REFLECTION = 88.5
     oe6.T_SOURCE = 800.0
-    oe6.X_ROT = P7.xrot
-    oe6.Y_ROT = P7.yrot
-    oe6.Z_ROT = P7.zrot
+    oe6.X_ROT = Motor.xrot6
+    oe6.Y_ROT = Motor.yrot6
+    oe6.Z_ROT = Motor.zrot6
     #  reflect
-    #oe7.FILE_REFL = b"C:/cygwin64/Oasys/Si.dat"
-    #oe7.F_REFLEC = 1
+    # oe7.FILE_REFL = b"C:/cygwin64/Oasys/Si.dat"
+    # oe7.F_REFLEC = 1
 
     # Run SHADOW to create the source
-    beamloss = []
-
     if iwrite:
         oe0.write("start.00")
 
     beam.genSource(oe0)
-    beamloss.append(beam.nrays(nolost=1))
 
     if iwrite:
         oe0.write("end.00")
@@ -410,7 +271,6 @@ def sim(x, i, o, step):
         oe1.write("start.01")
 
     beam.traceOE(oe1, 1)
-    beamloss.append(beam.nrays(nolost=1))
 
     if iwrite:
         oe1.write("end.01")
@@ -424,7 +284,6 @@ def sim(x, i, o, step):
         oe2.write("start.02")
 
     beam.traceOE(oe2, 2)
-    beamloss.append(beam.nrays(nolost=1))
 
     if iwrite:
         oe2.write("end.02")
@@ -438,7 +297,6 @@ def sim(x, i, o, step):
         oe3.write("start.03")
 
     beam.traceOE(oe3, 3)
-    beamloss.append(beam.nrays(nolost=1))
 
     if iwrite:
         oe3.write("end.03")
@@ -452,7 +310,6 @@ def sim(x, i, o, step):
         oe4.write("start.04")
 
     beam.traceOE(oe4, 4)
-    beamloss.append(beam.nrays(nolost=1))
 
     if iwrite:
         oe4.write("end.04")
@@ -466,7 +323,6 @@ def sim(x, i, o, step):
         oe5.write("start.05")
 
     beam.traceOE(oe5, 5)
-    beamloss.append(beam.nrays(nolost=1))
 
     if iwrite:
         oe5.write("end.05")
@@ -480,133 +336,173 @@ def sim(x, i, o, step):
         oe6.write("start.06")
 
     beam.traceOE(oe6, 6)
-    beamloss.append(beam.nrays(nolost=1))
 
     if iwrite:
         oe6.write("end.06")
         beam.write("star.06")
 
-    ##
-    ## run optical element 7
-    ##
-    #print("    Running optical element: %d" % (7))
-    #if iwrite:
-    #    oe7.write("start.07")
-#
-    #beam.traceOE(oe7, 7)
-    #beamloss.append(beam.nrays(nolost=1))
-#
-    #if iwrite:
-    #    oe7.write("end.07")
-    #    beam.write("star.07")
-
-    for j in range(len(beamloss)):
-        beamloss[j] = [str(j + 1), beamloss[j]]
-
-    #  plot rays per element
-    #  labels, ys = zip(*beamloss)
-    #  xs = numpy.arange(len(labels))
-    #  plt.plot(xs, ys)
-    #  plt.ylim(0, 100000)
-    #  plt.xticks(xs, labels)
-    #  plt.title('Rays lost per OE (all param = 0)')
-    #  plt.ylabel('Number of Good Rays')
-    #  plt.xlabel('OE Number')
-    #  for j in range(len(beamloss)):
-    #      plt.text(xs[j] - 0.4, ys[j] + 0.2, str(ys[j]), size=6)
-    #  plt.savefig('ray loss.png')
-
-    #  this line will plot the the beamline
-    #  Shadow.ShadowTools.plotxy(beam, 1, 3, nbins=101, nolost=1, title="Real space")
-    grays = 0
-    if str(format(Shadow.Beam.intensity(beam, nolost=1), '.2f')) != "0.00":
-        nrays = Shadow.Beam.nrays(beam, nolost=0)
-        grays = Shadow.Beam.nrays(beam, nolost=1)
-        o.write("Instance: " + str(x) + "\n")
-        #  o.write("Intensity = " + str(format(Shadow.Beam.intensity(beam, nolost=1), '.2f')) + "\n")
-        #  o.write("Total number of Rays = " + str(nrays) + "\n")
-        o.write("Total good rays = " + str(grays) + "\n")
-        #  o.write("Total lost rays = " + str(nrays - grays) + "\n")
-        if grays > 100:
-            try:
-                h, v = calcFWHM(beam, 1, 3)
-                o.write("fwhm H = " + str(h) + " um\n")
-                o.write("fwhm V = " + str(v) + " um\n\n")
-            except:
-                print("Error computing fwhm\n")
-        else:
-            print("\n")
-    else:
-        o.write("Instance: " + str(x) + "\n")
-        o.write("No good rays.\n\n")
-
-    return grays
+    return Shadow.Beam.nrays(beam, nolost=1)
 
 
 #  class for assigning degrees of freedom
-class step:
-    x = 0.00
-    y = 0.00
-    z = 0.00
-    xrot = 0.00
-    yrot = 0.00
-    zrot = 0.00
+class motor:
+    xoff1 = 0.00
+    yoff1 = 0.00
+    zoff1 = 0.00
+    xrot1 = 0.00
+    yrot1 = 0.00
+    zrot1 = 0.00
+
+    xoff2 = 0.00
+    yoff2 = 0.00
+    zoff2 = 0.00
+    xrot2 = 0.00
+    yrot2 = 0.00
+    zrot2 = 0.00
+
+    xoff3 = 0.00
+    yoff3 = 0.00
+    zoff3 = 0.00
+    xrot3 = 0.00
+    yrot3 = 0.00
+    zrot3 = 0.00
+
+    xoff4 = 0.00
+    yoff4 = 0.00
+    zoff4 = 0.00
+    xrot4 = 0.00
+    yrot4 = 0.00
+    zrot4 = 0.00
+
+    xoff5 = 0.00
+    yoff5 = 0.00
+    zoff5 = 0.00
+    xrot5 = 0.00
+    yrot5 = 0.00
+    zrot5 = 0.00
+
+    xoff6 = 0.00
+    yoff6 = 0.00
+    zoff6 = 0.00
+    xrot6 = 0.00
+    yrot6 = 0.00
+    zrot6 = 0.00
+
+
+def sample(Motor):
+    # use 20 if the number is too large for offset
+    Motor.xoff1 = float(format(random.uniform(-20.4, 20.4), '0.4f'))
+    Motor.xoff2 = float(format(random.uniform(-22.9, 22.9), '0.4f'))
+    Motor.xoff3 = float(format(random.uniform(-16.1, 16.1), '0.4f'))
+    Motor.xoff4 = float(format(random.uniform(-13.6, 13.6), '0.4f'))
+    Motor.xoff5 = float(format(random.uniform(-8.3, 8.3), '0.4f'))
+    Motor.xoff6 = float(format(random.uniform(-10.8, 10.8), '0.4f'))
+
+    Motor.yoff1 = float(format(random.uniform(-20, 20), '0.4f'))
+    Motor.yoff2 = float(format(random.uniform(-20, 20), '0.4f'))
+    Motor.yoff3 = float(format(random.uniform(-20, 20), '0.4f'))
+    Motor.yoff4 = float(format(random.uniform(-3.5, 3.5), '0.4f'))
+    Motor.yoff5 = float(format(random.uniform(-42, 42), '0.4f'))
+    Motor.yoff6 = float(format(random.uniform(-86.3, 86.3), '0.4f'))
+
+    Motor.zoff1 = float(format(random.uniform(-1.5, 1.5), '0.4f'))
+    Motor.zoff2 = float(format(random.uniform(-2.5, 2.5), '0.4f'))
+    Motor.zoff3 = float(format(random.uniform(-0.9, 0.9), '0.4f'))
+    Motor.zoff4 = float(format(random.uniform(-1, 1), '0.4f'))
+    Motor.zoff5 = float(format(random.uniform(-5, 5), '0.4f'))
+    Motor.zoff6 = float(format(random.uniform(-2.3, 2.3), '0.4f'))
+
+    Motor.xrot1 = float(format(random.uniform(-0.01, 0.01), '0.4f'))
+    Motor.xrot2 = float(format(random.uniform(-0.01, 0.01), '0.4f'))
+    Motor.xrot3 = float(format(random.uniform(-0.02, 0.02), '0.4f'))
+    Motor.xrot4 = float(format(random.uniform(-0.02, 0.02), '0.4f'))
+    Motor.xrot5 = float(format(random.uniform(-0.4, 0.4), '0.4f'))
+    Motor.xrot6 = float(format(random.uniform(-1.38, 1.38), '0.4f'))
+
+    Motor.yrot1 = float(format(random.uniform(-0.62, 0.62), '0.4f'))
+    Motor.yrot2 = float(format(random.uniform(-0.18, 0.18), '0.4f'))
+    Motor.yrot3 = float(format(random.uniform(-0.37, 0.37), '0.4f'))
+    Motor.yrot4 = float(format(random.uniform(-0.35, 0.35), '0.4f'))
+    Motor.yrot5 = float(format(random.uniform(-3.22, 3.22), '0.4f'))
+    Motor.yrot6 = float(format(random.uniform(-8.7, 8.7), '0.4f'))
+
+    Motor.zrot1 = float(format(random.uniform(-20, 20), '0.4f'))
+    Motor.zrot2 = float(format(random.uniform(-20, 20), '0.4f'))
+    Motor.zrot3 = float(format(random.uniform(-20, 20), '0.4f'))
+    Motor.zrot4 = float(format(random.uniform(-7.49, 7.49), '0.4f'))
+    Motor.zrot5 = float(format(random.uniform(-20, 20), '0.4f'))
+    Motor.zrot6 = float(format(random.uniform(-20, 20), '0.4f'))
+
+    return motor
 
 
 def main():
-    i = open("input.txt", "w+")
-    o = open("output.txt", "w+")
-    o.write("Output data: Real Space\n")
-
     #  sweep each degree of freedom for an optical element
-    step.xrot = 0
-    for x in range(100):
-        nrays = sim(x, i, o, step)
-        if nrays < 690.0:
-            print("Limit at: " + str(x))
-            break
-        step.xrot = step.xrot + -1
-        step.xrot = float(format(step.xrot, '0.4f'))
-
-    i.close()
-    o.close()
-
     rays = []
-    read = open("output.txt", "r")
-    for y in read:
-        if y == "No good rays.\n":
-            rays.append(0)
-        if y[0:5] == "Total":
-            rays.append(int(y[18:]))
+    plotCount = 1
+    with open('intensitiyData.csv', 'w', newline='') as file:
+        fieldnames = ['oe1-x', 'oe1-y', 'oe1-z', 'oe1-rotx', 'oe1-roty', 'oe1-rotz',
+                      'oe2-x', 'oe2-y', 'oe2-z', 'oe2-rotx', 'oe2-roty', 'oe2-rotz',
+                      'oe3-x', 'oe3-y', 'oe3-z', 'oe3-rotx', 'oe3-roty', 'oe3-rotz',
+                      'oe4-x', 'oe4-y', 'oe4-z', 'oe4-rotx', 'oe4-roty', 'oe4-rotz',
+                      'oe5-x', 'oe5-y', 'oe5-z', 'oe5-rotx', 'oe5-roty', 'oe5-rotz',
+                      'oe6-x', 'oe6-y', 'oe6-z', 'oe6-rotx', 'oe6-roty', 'oe6-rotz', 'intensity']
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
 
-    max, instance = maximum(rays)
-    print("Most rays at instance: " + str(instance) + " = " + str(max))
-    #  print(rays)
+        writer.writeheader()
+        for x in range(20000):
+            Motor = motor
+            Motor = sample(Motor)
+            nrays = sim(x, Motor)
+            rays.append(nrays)
+            writer.writerow({'oe1-x': str(Motor.xoff1), 'oe1-y': str(Motor.yoff1), 'oe1-z': str(Motor.zoff1),
+                             'oe1-rotx': str(Motor.xrot1), 'oe1-roty': str(Motor.yrot1), 'oe1-rotz': str(Motor.zrot1),
+                             'oe2-x': str(Motor.xoff2), 'oe2-y': str(Motor.yoff2), 'oe2-z': str(Motor.zoff2),
+                             'oe2-rotx': str(Motor.xrot2), 'oe2-roty': str(Motor.yrot2), 'oe2-rotz': str(Motor.zrot2),
+                             'oe3-x': str(Motor.xoff3), 'oe3-y': str(Motor.yoff3), 'oe3-z': str(Motor.zoff3),
+                             'oe3-rotx': str(Motor.xrot3), 'oe3-roty': str(Motor.yrot3), 'oe3-rotz': str(Motor.zrot3),
+                             'oe4-x': str(Motor.xoff4), 'oe4-y': str(Motor.yoff4), 'oe4-z': str(Motor.zoff4),
+                             'oe4-rotx': str(Motor.xrot4), 'oe4-roty': str(Motor.yrot4), 'oe4-rotz': str(Motor.zrot4),
+                             'oe5-x': str(Motor.xoff5), 'oe5-y': str(Motor.yoff5), 'oe5-z': str(Motor.zoff5),
+                             'oe5-rotx': str(Motor.xrot5), 'oe5-roty': str(Motor.yrot5), 'oe5-rotz': str(Motor.zrot5),
+                             'oe6-x': str(Motor.xoff6), 'oe6-y': str(Motor.yoff6), 'oe6-z': str(Motor.zoff6),
+                             'oe6-rotx': str(Motor.xrot6), 'oe6-roty': str(Motor.yrot6), 'oe6-rotz': str(Motor.zrot6),
+                             'intensity': str(nrays)})
 
-    read.close()
+            if (x % 1000) == 0 and x > 0:
 
-    # code to plot instances vs intensity (greater than 25 instances will look bad)
-    for j in range(len(rays)):
-        rays[j] = [str(j + 1), rays[j]]
 
-    labels, ys = zip(*rays)
-    xs = numpy.arange(len(labels))
-    width = 1
+                ys = rays
+                xs = []
+                for y in range(len(rays)):
+                    xs.append(y+1)
 
-    #plt.bar(xs, ys, width, align='center', color=['blue', 'cyan'], edgecolor='black')
-    plt.plot(xs, ys)
-    plt.title('OE6 xrot sweep limit')
-    plt.ylabel('Number of Good Rays')
-    plt.xlabel('Instance Number')
-    plt.ylim(0, 100000)
-    plt.xlim(100, 0)
+                plt.plot(xs, ys)
+                plt.title('Running plot of Intensities')
+                plt.ylabel('Number of Good Rays')
+                plt.xlabel('Instance Number')
+                plt.ylim(0, 100000)  # intensity
+                plt.xlim(0, x)  # how many runs
 
-    #plt.xticks(xs, labels)  # Replace default x-ticks with xs, then replace xs with labels
-    #for j in range(len(rays)):
-    #    plt.text(xs[j] - 0.4, ys[j] + 0.2, str(ys[j]), size=6)
-    #plt.yticks(ys)
 
-    plt.savefig('instanceplot.png')
+
+                plt.savefig('instanceplot' + str(plotCount) + 'png')
+                plotCount += 1
+
+        # plot the last 1000 rays
+        ys = rays
+        xs = []
+        for y in range(len(rays)):
+            xs.append(y + 1)
+
+        plt.plot(xs, ys)
+        plt.title('Running plot of Intensities')
+        plt.ylabel('Number of Good Rays')
+        plt.xlabel('Instance Number')
+        plt.ylim(0, 100000)  # intensity
+        plt.xlim(0, x)  # how many runs
+
+
 
 
 if __name__ == "__main__":
