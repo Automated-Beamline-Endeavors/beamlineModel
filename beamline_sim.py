@@ -508,53 +508,5 @@ def setMotors(mvalues):
     return Motors
 
 
-def main():
-    #  sweep each degree of freedom for an optical element
-    rays = []
-    with open('intensityData.csv', 'w', newline='') as file:
-        fieldnames = ['oe1-x', 'oe1-y', 'oe1-z', 'oe1-rotx', 'oe1-roty', 'oe1-rotz',
-                      'oe2-x', 'oe2-y', 'oe2-z', 'oe2-rotx', 'oe2-roty', 'oe2-rotz',
-                      'oe3-x', 'oe3-y', 'oe3-z', 'oe3-rotx', 'oe3-roty', 'oe3-rotz',
-                      'oe4-x', 'oe4-y', 'oe4-z', 'oe4-rotx', 'oe4-roty', 'oe4-rotz',
-                      'oe5-x', 'oe5-y', 'oe5-z', 'oe5-rotx', 'oe5-roty', 'oe5-rotz',
-                      'oe6-x', 'oe6-y', 'oe6-z', 'oe6-rotx', 'oe6-roty', 'oe6-rotz', 'intensity']
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
-
-        writer.writeheader()
-        #  fills a csv file with the number of lines = loop
-        for x in range(10000):
-            Motor = motor
-            #Motor = sample()
-            positions = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8,
-                         1.9, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0, 3.1, 3.2, 3.3, 3.4, 3.5]
-            Motor = setMotors(positions)
-            nrays = sim(Motor)
-            rays.append(nrays)
-            writer.writerow({'oe1-x': str(Motor.xoff1), 'oe1-y': str(Motor.yoff1), 'oe1-z': str(Motor.zoff1),
-                             'oe1-rotx': str(Motor.xrot1), 'oe1-roty': str(Motor.yrot1), 'oe1-rotz': str(Motor.zrot1),
-                             'oe2-x': str(Motor.xoff2), 'oe2-y': str(Motor.yoff2), 'oe2-z': str(Motor.zoff2),
-                             'oe2-rotx': str(Motor.xrot2), 'oe2-roty': str(Motor.yrot2), 'oe2-rotz': str(Motor.zrot2),
-                             'oe3-x': str(Motor.xoff3), 'oe3-y': str(Motor.yoff3), 'oe3-z': str(Motor.zoff3),
-                             'oe3-rotx': str(Motor.xrot3), 'oe3-roty': str(Motor.yrot3), 'oe3-rotz': str(Motor.zrot3),
-                             'oe4-x': str(Motor.xoff4), 'oe4-y': str(Motor.yoff4), 'oe4-z': str(Motor.zoff4),
-                             'oe4-rotx': str(Motor.xrot4), 'oe4-roty': str(Motor.yrot4), 'oe4-rotz': str(Motor.zrot4),
-                             'oe5-x': str(Motor.xoff5), 'oe5-y': str(Motor.yoff5), 'oe5-z': str(Motor.zoff5),
-                             'oe5-rotx': str(Motor.xrot5), 'oe5-roty': str(Motor.yrot5), 'oe5-rotz': str(Motor.zrot5),
-                             'oe6-x': str(Motor.xoff6), 'oe6-y': str(Motor.yoff6), 'oe6-z': str(Motor.zoff6),
-                             'oe6-rotx': str(Motor.xrot6), 'oe6-roty': str(Motor.yrot6), 'oe6-rotz': str(Motor.zrot6),
-                             'intensity': str(nrays)})
-
-        # plot the histogram of rays
-        df_tips = pd.read_csv('intensityData.csv')
-        sns.set(font_scale=1.4)
-        df_tips['intensity'].plot(kind='hist')
-        plt.xlabel("Total Intensity (# of rays)", labelpad=14)
-        plt.ylabel("Frequency", labelpad=14)
-        # logarithmic scale for better analysis
-        plt.yscale("log")
-        plt.title("Distribution of Intensities", y=1.015, fontsize=22)
-        plt.tight_layout()
-        plt.savefig('Histogram.png')
-
 if __name__ == "__main__":
     sim(motor)
