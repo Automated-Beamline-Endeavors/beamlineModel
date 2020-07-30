@@ -1,21 +1,24 @@
 #
 # Python script to run shadow3. Created automatically with ShadowTools.make_python_script_from_list().
 #
+# Code adapted by Trent Mathews
+# Use code to create a .csv file for a sample space
+#
+
 import Shadow
 import numpy
 import random
 import matplotlib.pyplot as plt
 import csv
+import pandas as pd
+import seaborn as sns
 
+# change this value to generate unique data for same sample space
 random.seed(2)
 
 
-def my_range(start, end, step):
-    while start <= end:
-        yield start
-        start += step
-
-
+# function for getting the FWHM in case you need this, currently not in use in the code
+# call it as horizontal, vertical = calcFWHM(beam, 1, 3). 1 = x coord and 3 = z coord in shadow lib
 def calcFWHM(beam, col_h, col_v):
     if isinstance(beam, str):
         beam1 = Shadow.Beam()
@@ -32,28 +35,11 @@ def calcFWHM(beam, col_h, col_v):
     return h, v
 
 
-def maximum(rays):
-    maxima = 0
-    instance = 0
-    for x in range(len(rays)):
-        if rays[x] > maxima:
-            maxima = rays[x]
-            instance = x + 1
-
-    return maxima, instance
-
-
-def sim(x, Motor):
+def sim(Motor):
     # write (1) or not (0) SHADOW files start.xx end.xx star.xx
     iwrite = 0
-    x += 1
-
-
 
     #  Start the beam simulation
-    #  Sweep from -0.0005 to 0.0005 with step size = 0.0005
-    #  Sweep from -3 to 3 with step size = 1
-
     #
     # initialize shadow3 source (oe0) and beam
     #
@@ -71,7 +57,7 @@ def sim(x, Motor):
     #  https://raw.githubusercontent.com/srio/shadow3/master/docs/source.nml
     #  https://raw.githubusercontent.com/srio/shadow3/master/docs/oe.nml
     #
-
+    #  all of the values come from the OASYS model of the IEX beamline
     #  undulator
     oe0.FDISTR = 3
     oe0.F_COLOR = 3
@@ -100,9 +86,6 @@ def sim(x, Motor):
     oe1.FHIT_C = 1
     oe1.FWRITE = 3
     oe1.F_MOVE = 1
-    oe1.OFFX = Motor.xoff1
-    oe1.OFFY = Motor.yoff1
-    oe1.OFFZ = Motor.zoff1
     oe1.RLEN1 = 260.0
     oe1.RLEN2 = 260.0
     oe1.RWIDX1 = 20.0
@@ -111,6 +94,9 @@ def sim(x, Motor):
     oe1.T_INCIDENCE = 89.599998
     oe1.T_REFLECTION = 89.599998
     oe1.T_SOURCE = 30800.0
+    oe1.OFFX = Motor.xoff1
+    oe1.OFFY = Motor.yoff1
+    oe1.OFFZ = Motor.zoff1
     oe1.X_ROT = Motor.xrot1
     oe1.Y_ROT = Motor.yrot1
     oe1.Z_ROT = Motor.zrot1
@@ -123,9 +109,6 @@ def sim(x, Motor):
     oe2.FHIT_C = 1
     oe2.FWRITE = 3
     oe2.F_MOVE = 1
-    oe2.OFFX = Motor.xoff2
-    oe2.OFFY = Motor.yoff2
-    oe2.OFFZ = Motor.zoff2
     oe2.RLEN1 = 75.0
     oe2.RLEN2 = 75.0
     oe2.RWIDX1 = 22.5
@@ -134,6 +117,9 @@ def sim(x, Motor):
     oe2.T_INCIDENCE = 88.5
     oe2.T_REFLECTION = 88.5
     oe2.T_SOURCE = 500.0
+    oe2.OFFX = Motor.xoff2
+    oe2.OFFY = Motor.yoff2
+    oe2.OFFZ = Motor.zoff2
     oe2.X_ROT = Motor.xrot2
     oe2.Y_ROT = Motor.yrot2
     oe2.Z_ROT = Motor.zrot2
@@ -147,9 +133,6 @@ def sim(x, Motor):
     oe3.FHIT_C = 1
     oe3.FWRITE = 3
     oe3.F_MOVE = 1
-    oe3.OFFX = Motor.xoff3
-    oe3.OFFY = Motor.yoff3
-    oe3.OFFZ = Motor.zoff3
     oe3.RLEN1 = 190.0
     oe3.RLEN2 = 190.0
     oe3.RWIDX1 = 15.0
@@ -158,6 +141,9 @@ def sim(x, Motor):
     oe3.T_INCIDENCE = 86.810772
     oe3.T_REFLECTION = 86.810772
     oe3.T_SOURCE = 8265.8165
+    oe3.OFFX = Motor.xoff3
+    oe3.OFFY = Motor.yoff3
+    oe3.OFFZ = Motor.zoff3
     oe3.X_ROT = Motor.xrot3
     oe3.Y_ROT = Motor.yrot3
     oe3.Z_ROT = Motor.zrot3
@@ -174,9 +160,6 @@ def sim(x, Motor):
     oe4.F_MOVE = 1
     oe4.F_RULING = 5
     oe4.F_RUL_ABS = 1
-    oe4.OFFX = Motor.xoff4
-    oe4.OFFY = Motor.yoff4
-    oe4.OFFZ = Motor.zoff4
     oe4.RLEN1 = 57.5
     oe4.RLEN2 = 57.5
     oe4.RULING = 1199.22002
@@ -189,6 +172,9 @@ def sim(x, Motor):
     oe4.T_INCIDENCE = 87.771697
     oe4.T_REFLECTION = 85.049847
     oe4.T_SOURCE = 135.0
+    oe4.OFFX = Motor.xoff4
+    oe4.OFFY = Motor.yoff4
+    oe4.OFFZ = Motor.zoff4
     oe4.X_ROT = Motor.xrot4
     oe4.Y_ROT = Motor.yrot4
     oe4.Z_ROT = Motor.zrot4
@@ -205,9 +191,6 @@ def sim(x, Motor):
     oe5.FWRITE = 3
     oe5.F_EXT = 1
     oe5.F_MOVE = 1
-    oe5.OFFX = Motor.xoff5
-    oe5.OFFY = Motor.yoff5
-    oe5.OFFZ = Motor.zoff5
     oe5.RLEN1 = 140.0
     oe5.RLEN2 = 140.0
     oe5.RWIDX1 = 7.5
@@ -216,6 +199,9 @@ def sim(x, Motor):
     oe5.T_INCIDENCE = 88.5
     oe5.T_REFLECTION = 88.5
     oe5.T_SOURCE = 4600.0
+    oe5.OFFX = Motor.xoff5
+    oe5.OFFY = Motor.yoff5
+    oe5.OFFZ = Motor.zoff5
     oe5.X_ROT = Motor.xrot5
     oe5.Y_ROT = Motor.yrot5
     oe5.Z_ROT = Motor.zrot5
@@ -235,9 +221,6 @@ def sim(x, Motor):
     oe6.FWRITE = 3
     oe6.F_EXT = 1
     oe6.F_MOVE = 1
-    oe6.OFFX = Motor.xoff6
-    oe6.OFFY = Motor.yoff6
-    oe6.OFFZ = Motor.zoff6
     oe6.RLEN1 = 35.0
     oe6.RLEN2 = 35.0
     oe6.RWIDX1 = 10.0
@@ -246,6 +229,9 @@ def sim(x, Motor):
     oe6.T_INCIDENCE = 88.5
     oe6.T_REFLECTION = 88.5
     oe6.T_SOURCE = 800.0
+    oe6.OFFX = Motor.xoff6
+    oe6.OFFY = Motor.yoff6
+    oe6.OFFZ = Motor.zoff6
     oe6.X_ROT = Motor.xrot6
     oe6.Y_ROT = Motor.yrot6
     oe6.Z_ROT = Motor.zrot6
@@ -345,6 +331,8 @@ def sim(x, Motor):
 
 
 #  class for assigning degrees of freedom
+#  leave the class set to 0
+#  to change values,
 class motor:
     xoff1 = 0.00
     yoff1 = 0.00
@@ -389,6 +377,7 @@ class motor:
     zrot6 = 0.00
 
 
+# create the sample space for testing
 def sample(Motor):
     # use 20 if the number is too large for offset
     # ranges from intensityData_90.csv
@@ -438,10 +427,12 @@ def sample(Motor):
 
 
 def main():
-    #  sweep each degree of freedom for an optical element
+    #
     rays = []
     plotCount = 1
-    with open('intensitiyData.csv', 'w', newline='') as file:
+
+    # code for create a .csv file
+    with open('intensityData.csv', 'w', newline='') as file:
         fieldnames = ['oe1-x', 'oe1-y', 'oe1-z', 'oe1-rotx', 'oe1-roty', 'oe1-rotz',
                       'oe2-x', 'oe2-y', 'oe2-z', 'oe2-rotx', 'oe2-roty', 'oe2-rotz',
                       'oe3-x', 'oe3-y', 'oe3-z', 'oe3-rotx', 'oe3-roty', 'oe3-rotz',
@@ -451,11 +442,12 @@ def main():
         writer = csv.DictWriter(file, fieldnames=fieldnames)
 
         writer.writeheader()
-        for x in range(20000):
+        for x in range(10000):
             Motor = motor
             Motor = sample(Motor)
-            nrays = sim(x, Motor)
+            nrays = sim(Motor)
             rays.append(nrays)
+            # code for writing the .csv file
             writer.writerow({'oe1-x': str(Motor.xoff1), 'oe1-y': str(Motor.yoff1), 'oe1-z': str(Motor.zoff1),
                              'oe1-rotx': str(Motor.xrot1), 'oe1-roty': str(Motor.yrot1), 'oe1-rotz': str(Motor.zrot1),
                              'oe2-x': str(Motor.xoff2), 'oe2-y': str(Motor.yoff2), 'oe2-z': str(Motor.zoff2),
@@ -470,38 +462,18 @@ def main():
                              'oe6-rotx': str(Motor.xrot6), 'oe6-roty': str(Motor.yrot6), 'oe6-rotz': str(Motor.zrot6),
                              'intensity': str(nrays)})
 
-            if (x % 1000) == 0 and x > 0:
-
-
-                ys = rays
-                xs = []
-                for y in range(len(rays)):
-                    xs.append(y+1)
-
-                plt.plot(xs, ys)
-                plt.title('Running plot of Intensities')
-                plt.ylabel('Number of Good Rays')
-                plt.xlabel('Instance Number')
-                plt.ylim(0, 100000)  # intensity
-                plt.xlim(0, x)  # how many runs
-
-
-
-                plt.savefig('instanceplot' + str(plotCount) + 'png')
-                plotCount += 1
-
-        # plot the last 1000 rays
-        ys = rays
-        xs = []
-        for y in range(len(rays)):
-            xs.append(y + 1)
-
-        plt.plot(xs, ys)
-        plt.title('Running plot of Intensities')
-        plt.ylabel('Number of Good Rays')
-        plt.xlabel('Instance Number')
-        plt.ylim(0, 100000)  # intensity
-        plt.xlim(0, x)  # how many runs
+    # plot a histogram for the data
+    # reads the .csv to create a plot
+    percent_max = 99  # change this to whatever the sample space is
+    sns.set(font_scale=1.4)
+    plt.tight_layout()
+    histo_plot = pd.read_csv('intensityData.csv')
+    histo_plot.hist('intensity', bins=100, log=True)
+    plt.xlabel('Intensity')
+    plt.ylabel('Configurations')
+    plt.title(str(percent_max) + '% cutoff histogram')
+    plt.savefig(str(percent_max) + '% histogram.png')
+    print(str(percent_max) + '% has {}% zeros'.format(sum(histo_plot['intensity'] == 0) / 1e2))
 
 
 

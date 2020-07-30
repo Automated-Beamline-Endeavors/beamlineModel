@@ -1,21 +1,51 @@
 # using miniconda3 to get access to Shadow3 library
+#
+# Python script to run shadow3. Created automatically with ShadowTools.make_python_script_from_list().
+#
+# Code adapted by Trent Mathews
+# Use code to simulate intensity for given parameters
+# Use console window to use the code
+#
+# import beamline_sim as blsim
+# positions = [0,1,2...,35]
+# motors = blsim.setMotors(positions)
+# intensity = blsim.sim(motors)
+#
+
 import Shadow
 import numpy
 import random
-import csv
 import matplotlib.pyplot as plt
-import pandas as pd
-import seaborn as sns
+import csv
 
+# change this value to generate unique data for same sample space
 random.seed(2)
+
+
+# function for getting the FWHM in case you need this, currently not in use in the code
+# call it as horizontal, vertical = calcFWHM(beam, 1, 3). 1 = x coord and 3 = z coord in shadow lib
+def calcFWHM(beam, col_h, col_v):
+    if isinstance(beam, str):
+        beam1 = Shadow.Beam()
+        beam1.load(beam)
+        beam = beam1
+
+    tmp = beam.histo2(col_h, col_v, nbins=101, nolost=1)
+
+    h = tmp["fwhm_h"] * pow(10, 3)
+    v = tmp["fwhm_v"] * pow(10, 3)
+
+    h = format(h, '0.3f')
+    v = format(v, '0.3f')
+    return h, v
 
 
 def sim(Motor):
     # write (1) or not (0) SHADOW files start.xx end.xx star.xx
     iwrite = 0
 
+    #  Start the beam simulation
     #
-    # Start the beam simulation
     # initialize shadow3 source (oe0) and beam
     #
     beam = Shadow.Beam()
@@ -32,7 +62,7 @@ def sim(Motor):
     #  https://raw.githubusercontent.com/srio/shadow3/master/docs/source.nml
     #  https://raw.githubusercontent.com/srio/shadow3/master/docs/oe.nml
     #
-
+    #  all of the values come from the OASYS model of the IEX beamline
     #  undulator
     oe0.FDISTR = 3
     oe0.F_COLOR = 3
@@ -61,9 +91,6 @@ def sim(Motor):
     oe1.FHIT_C = 1
     oe1.FWRITE = 3
     oe1.F_MOVE = 1
-    oe1.OFFX = Motor.xoff1
-    oe1.OFFY = Motor.yoff1
-    oe1.OFFZ = Motor.zoff1
     oe1.RLEN1 = 260.0
     oe1.RLEN2 = 260.0
     oe1.RWIDX1 = 20.0
@@ -72,21 +99,21 @@ def sim(Motor):
     oe1.T_INCIDENCE = 89.599998
     oe1.T_REFLECTION = 89.599998
     oe1.T_SOURCE = 30800.0
+    oe1.OFFX = Motor.xoff1
+    oe1.OFFY = Motor.yoff1
+    oe1.OFFZ = Motor.zoff1
     oe1.X_ROT = Motor.xrot1
     oe1.Y_ROT = Motor.yrot1
     oe1.Z_ROT = Motor.zrot1
     #  when taking into account reflectivity
-    #oe1.FILE_REFL = b"C:/cygwin64/Oasys/Si.dat"
-    #oe1.F_REFLEC = 1
+    # oe1.FILE_REFL = b"C:/cygwin64/Oasys/Si.dat"
+    # oe1.F_REFLEC = 1
 
     #  plane mirror
     oe2.DUMMY = 0.1
     oe2.FHIT_C = 1
     oe2.FWRITE = 3
     oe2.F_MOVE = 1
-    oe2.OFFX = Motor.xoff2
-    oe2.OFFY = Motor.yoff2
-    oe2.OFFZ = Motor.zoff2
     oe2.RLEN1 = 75.0
     oe2.RLEN2 = 75.0
     oe2.RWIDX1 = 22.5
@@ -95,12 +122,15 @@ def sim(Motor):
     oe2.T_INCIDENCE = 88.5
     oe2.T_REFLECTION = 88.5
     oe2.T_SOURCE = 500.0
+    oe2.OFFX = Motor.xoff2
+    oe2.OFFY = Motor.yoff2
+    oe2.OFFZ = Motor.zoff2
     oe2.X_ROT = Motor.xrot2
     oe2.Y_ROT = Motor.yrot2
     oe2.Z_ROT = Motor.zrot2
     #  reflect
-    #oe2.FILE_REFL = b"C:/cygwin64/Oasys/Si.dat"
-    #oe2.F_REFLEC = 1
+    # oe2.FILE_REFL = b"C:/cygwin64/Oasys/Si.dat"
+    # oe2.F_REFLEC = 1
 
     #  plane mirror
     oe3.ALPHA = 90.0
@@ -108,9 +138,6 @@ def sim(Motor):
     oe3.FHIT_C = 1
     oe3.FWRITE = 3
     oe3.F_MOVE = 1
-    oe3.OFFX = Motor.xoff3
-    oe3.OFFY = Motor.yoff3
-    oe3.OFFZ = Motor.zoff3
     oe3.RLEN1 = 190.0
     oe3.RLEN2 = 190.0
     oe3.RWIDX1 = 15.0
@@ -119,12 +146,15 @@ def sim(Motor):
     oe3.T_INCIDENCE = 86.810772
     oe3.T_REFLECTION = 86.810772
     oe3.T_SOURCE = 8265.8165
+    oe3.OFFX = Motor.xoff3
+    oe3.OFFY = Motor.yoff3
+    oe3.OFFZ = Motor.zoff3
     oe3.X_ROT = Motor.xrot3
     oe3.Y_ROT = Motor.yrot3
     oe3.Z_ROT = Motor.zrot3
     #  reflect
-    #oe3.FILE_REFL = b"C:/cygwin64/Oasys/Si.dat"
-    #oe3.F_REFLEC = 1
+    # oe3.FILE_REFL = b"C:/cygwin64/Oasys/Si.dat"
+    # oe3.F_REFLEC = 1
 
     #  plane grating
     oe4.ALPHA = 180.0
@@ -135,9 +165,6 @@ def sim(Motor):
     oe4.F_MOVE = 1
     oe4.F_RULING = 5
     oe4.F_RUL_ABS = 1
-    oe4.OFFX = Motor.xoff4
-    oe4.OFFY = Motor.yoff4
-    oe4.OFFZ = Motor.zoff4
     oe4.RLEN1 = 57.5
     oe4.RLEN2 = 57.5
     oe4.RULING = 1199.22002
@@ -150,6 +177,9 @@ def sim(Motor):
     oe4.T_INCIDENCE = 87.771697
     oe4.T_REFLECTION = 85.049847
     oe4.T_SOURCE = 135.0
+    oe4.OFFX = Motor.xoff4
+    oe4.OFFY = Motor.yoff4
+    oe4.OFFZ = Motor.zoff4
     oe4.X_ROT = Motor.xrot4
     oe4.Y_ROT = Motor.yrot4
     oe4.Z_ROT = Motor.zrot4
@@ -166,9 +196,6 @@ def sim(Motor):
     oe5.FWRITE = 3
     oe5.F_EXT = 1
     oe5.F_MOVE = 1
-    oe5.OFFX = Motor.xoff5
-    oe5.OFFY = Motor.yoff5
-    oe5.OFFZ = Motor.zoff5
     oe5.RLEN1 = 140.0
     oe5.RLEN2 = 140.0
     oe5.RWIDX1 = 7.5
@@ -177,12 +204,15 @@ def sim(Motor):
     oe5.T_INCIDENCE = 88.5
     oe5.T_REFLECTION = 88.5
     oe5.T_SOURCE = 4600.0
+    oe5.OFFX = Motor.xoff5
+    oe5.OFFY = Motor.yoff5
+    oe5.OFFZ = Motor.zoff5
     oe5.X_ROT = Motor.xrot5
     oe5.Y_ROT = Motor.yrot5
     oe5.Z_ROT = Motor.zrot5
     #  reflect
-    #oe6.FILE_REFL = b"C:/cygwin64/Oasys/Si.dat"
-    #oe6.F_REFLEC = 1
+    # oe6.FILE_REFL = b"C:/cygwin64/Oasys/Si.dat"
+    # oe6.F_REFLEC = 1
 
     #  ellipsoid mirror oe7 -> oe6 after removing slit
     oe6.ALPHA = 90.0
@@ -196,9 +226,6 @@ def sim(Motor):
     oe6.FWRITE = 3
     oe6.F_EXT = 1
     oe6.F_MOVE = 1
-    oe6.OFFX = Motor.xoff6
-    oe6.OFFY = Motor.yoff6
-    oe6.OFFZ = Motor.zoff6
     oe6.RLEN1 = 35.0
     oe6.RLEN2 = 35.0
     oe6.RWIDX1 = 10.0
@@ -207,12 +234,15 @@ def sim(Motor):
     oe6.T_INCIDENCE = 88.5
     oe6.T_REFLECTION = 88.5
     oe6.T_SOURCE = 800.0
+    oe6.OFFX = Motor.xoff6
+    oe6.OFFY = Motor.yoff6
+    oe6.OFFZ = Motor.zoff6
     oe6.X_ROT = Motor.xrot6
     oe6.Y_ROT = Motor.yrot6
     oe6.Z_ROT = Motor.zrot6
     #  reflect
-    #oe6.FILE_REFL = b"C:/cygwin64/Oasys/Si.dat"
-    #oe6.F_REFLEC = 1
+    # oe7.FILE_REFL = b"C:/cygwin64/Oasys/Si.dat"
+    # oe7.F_REFLEC = 1
 
     # Run SHADOW to create the source
     if iwrite:
@@ -302,11 +332,12 @@ def sim(Motor):
         oe6.write("end.06")
         beam.write("star.06")
 
-    # return the number of good rays
-    # print(str(beam.nrays(nolost=1)))
-    return beam.nrays(nolost=1)
+    return Shadow.Beam.nrays(beam, nolost=1)
 
 
+#  class for assigning degrees of freedom
+#  leave the class set to 0
+#  to change values, use the setMotors function
 class motor:
     xoff1 = 0.00
     yoff1 = 0.00
@@ -506,6 +537,7 @@ def setMotors(mvalues):
         print_motors(Motors)
 
     return Motors
+
 
 
 if __name__ == "__main__":
